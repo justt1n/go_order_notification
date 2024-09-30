@@ -110,5 +110,8 @@ func handleEmptyRequest(w http.ResponseWriter) {
 
 	// Respond with success
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "Empty request handled with default order data and sent to Discord\n")
+	_, err = fmt.Fprint(w, "Empty request handled with default order data and sent to Discord\n")
+	if err != nil {
+		return
+	}
 }
