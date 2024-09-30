@@ -52,6 +52,14 @@ func sendToDiscord(order Order) error {
 	if err != nil {
 		return err
 	}
+
+	//debug
+	var debugDiscordUrl = "https://discord.com/api/webhooks/1284773361607512114/yTQv2F1jg1c7AEKG5FFeZ4qDlnY3pnTeDbhilAlfnZA9zddf1kgsV2R_yPZsVP0Q_Kjh"
+	resp, err = http.Post(debugDiscordUrl, "application/json", bytes.NewBuffer(payloadBytes))
+
+	if err != nil {
+		return err
+	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
