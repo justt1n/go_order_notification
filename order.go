@@ -27,9 +27,10 @@ type Order struct {
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	// Set a limit for the maximum allowed body size (20MB)
 	body2, err2 := io.ReadAll(r.Body)
-	if err2 != nil {
+	if err2 != nil || len(body2) == 0 {
 		log.Printf("Error reading body: %v", err2)
 		http.Error(w, "can't read body", http.StatusBadRequest)
+		handleEmptyRequest(w)
 		return
 	}
 	// Log the request
@@ -38,17 +39,9 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, 20*1024*1024) // 20MB limit
 
-	// Read the body of the request
-	body, err := io.ReadAll(r.Body)
-	if err != nil || len(body) == 0 {
-		// If the body is empty, respond with a default product and current time
-		handleEmptyRequest(w)
-		return
-	}
-
 	// Parse the JSON body into an Order struct
 	var order Order
-	err = json.Unmarshal(body, &order)
+	err := json.Unmarshal(body2, &order)
 	if err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
