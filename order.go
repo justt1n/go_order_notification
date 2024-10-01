@@ -26,6 +26,11 @@ type Order struct {
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	// Set a limit for the maximum allowed body size (20MB)
+	if r.Method == "CONNECT" {
+		http.Error(w, "CONNECT method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	body2, err2 := io.ReadAll(r.Body)
 	if err2 != nil || len(body2) == 0 {
 		log.Printf("Error reading body: %v", err2)
