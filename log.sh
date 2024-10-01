@@ -1,0 +1,1 @@
+journalctl -u goorder.service -f
