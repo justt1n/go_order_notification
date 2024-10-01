@@ -18,13 +18,17 @@ type Product struct {
 
 // Order represents the incoming order notification
 type Order struct {
-	OrderID     string    `json:"order_id"`
-	Created     string    `json:"created"`
+	OrderID      string    `json:"order_id"`
+	Created      string    `json:"created"`
 	ProductsSold []Product `json:"products_sold"`
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	// Set a limit for the maximum allowed body size (20MB)
+	if r.Method == http.MethodGet {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	r.Body = http.MaxBytesReader(w, r.Body, 20*1024*1024) // 20MB limit
 
 	// Read the body of the request
