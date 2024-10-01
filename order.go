@@ -32,7 +32,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 
 	// Read the body of the request
 	body, err := io.ReadAll(r.Body)
-	log.Println("body: ", body)
+	log.Println("body: ", string(body))
 	if err != nil || len(body) == 0 {
 		// If the body is empty, respond with a default product and current time
 		handleEmptyRequest(w)
@@ -76,6 +76,12 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(r.Body)
 }
 
 func handleEmptyRequest(w http.ResponseWriter) {
