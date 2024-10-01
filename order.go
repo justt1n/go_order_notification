@@ -3,7 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 )
 
@@ -24,15 +25,14 @@ type Order struct {
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
-	// Set a limit for the maximum allowed body size (20MB)
 	if r.Method == http.MethodGet {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	r.Body = http.MaxBytesReader(w, r.Body, 20*1024*1024) // 20MB limit
 
 	// Read the body of the request
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
+	log.Println("body: ", body)
 	if err != nil || len(body) == 0 {
 		// If the body is empty, respond with a default product and current time
 		handleEmptyRequest(w)
