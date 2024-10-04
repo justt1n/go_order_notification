@@ -26,13 +26,19 @@ func sendToDiscord(order Order) error {
 	// Create the Discord message
 	var message string
 	message += "📦 **Order Received**:\n"
-	message += fmt.Sprintf("**Order ID**: `%s`\n", order.OrderID)   // Inline code for Order ID
-	message += fmt.Sprintf("**Created At**: `%s`\n", order.Created) // Inline code for Created At
+	message += fmt.Sprintf("**Order ID**: `%s`\n", order.OrderID)
+	
+	// Ensure Created At is not empty
+	if order.Created != "" {
+		message += fmt.Sprintf("**Created At**: `%s`\n", order.Created)
+	} else {
+		message += "**Created At**: `Unknown`\n"  // Fallback in case the date is empty
+	}
 
 	for i, product := range order.ProductsSold {
 		// Add a horizontal line between products if there's more than one
 		if i > 0 {
-			message += "\n───────────────\n" // Separator for readability between products
+			message += "\n───────────────\n"  // Separator for readability between products
 		}
 
 		// Format product details
@@ -42,7 +48,7 @@ func sendToDiscord(order Order) error {
 		if len(product.UserData) > 0 {
 			message += "**User Data**:\n"
 			for key, value := range product.UserData {
-				message += fmt.Sprintf("> • **%s**: `%s`\n", key, value) // Indented bullet points for user data
+				message += fmt.Sprintf("> • **%s**: `%s`\n", key, value)  // Indented bullet points for user data
 			}
 		}
 
@@ -74,6 +80,7 @@ func sendToDiscord(order Order) error {
 	return nil
 }
 
+
 func sendToDebugDiscord(order Order) error {
 	// Load .env file for webhook URL
 	err := godotenv.Load()
@@ -89,13 +96,19 @@ func sendToDebugDiscord(order Order) error {
 	// Create the Discord message
 	var message string
 	message += "📦 **Order Received**:\n"
-	message += fmt.Sprintf("**Order ID**: `%s`\n", order.OrderID)   // Inline code for Order ID
-	message += fmt.Sprintf("**Created At**: `%s`\n", order.Created) // Inline code for Created At
+	message += fmt.Sprintf("**Order ID**: `%s`\n", order.OrderID)
+	
+	// Ensure Created At is not empty
+	if order.Created != "" {
+		message += fmt.Sprintf("**Created At**: `%s`\n", order.Created)
+	} else {
+		message += "**Created At**: `Unknown`\n"  // Fallback in case the date is empty
+	}
 
 	for i, product := range order.ProductsSold {
 		// Add a horizontal line between products if there's more than one
 		if i > 0 {
-			message += "\n───────────────\n" // Separator for readability between products
+			message += "\n───────────────\n"  // Separator for readability between products
 		}
 
 		// Format product details
@@ -105,7 +118,7 @@ func sendToDebugDiscord(order Order) error {
 		if len(product.UserData) > 0 {
 			message += "**User Data**:\n"
 			for key, value := range product.UserData {
-				message += fmt.Sprintf("> • **%s**: `%s`\n", key, value) // Indented bullet points for user data
+				message += fmt.Sprintf("> • **%s**: `%s`\n", key, value)  // Indented bullet points for user data
 			}
 		}
 
