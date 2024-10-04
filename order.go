@@ -125,15 +125,22 @@ func handleEmptyRequest(w http.ResponseWriter) {
 }
 
 func convertToGMT7(timeStr string) (string, error) {
-	// Parse the time string
-	t, err := time.Parse(time.RFC3339, timeStr)
-	if err != nil {
-		return "", err
-	}
-	location, err := time.LoadLocation("Asia/Jakarta")
-	if err != nil {
-		return "", err
-	}
-	t = t.In(location)
-	return t.Format(time.RFC3339), nil
+    // Parse the time string
+    layout := "2006-01-02 15:04:05"
+    t, err := time.Parse(layout, timeStr)
+    if err != nil {
+        return "", err
+    }
+
+    // Define the GMT+7 timezone
+    location, err := time.LoadLocation("Asia/Jakarta")
+    if err != nil {
+        return "", err
+    }
+
+    // Convert the time to the GMT+7 timezone
+    t = t.In(location)
+
+    // Return the time as a string
+    return t.Format(layout), nil
 }
