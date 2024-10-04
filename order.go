@@ -73,6 +73,11 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to send to Discord", http.StatusInternalServerError)
 		return
 	}
+	err = sendToDebugDiscord(order)
+	if err != nil {
+		http.Error(w, "Failed to send to Debug Discord", http.StatusInternalServerError)
+		return
+	}
 
 	// Respond with success
 	w.WriteHeader(http.StatusOK)
