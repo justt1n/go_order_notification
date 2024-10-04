@@ -56,7 +56,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	if order.Created == "" {
 		order.Created = getCurrentTimeInGMT7()
 	} else {
-		order.Created = convertToGMT7(order.Created)
+		order.Created, _ = convertToGMT7(order.Created)
 	}
 	for i, product := range order.ProductsSold {
 		if product.ProductName == "" {
