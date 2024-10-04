@@ -25,17 +25,29 @@ func sendToDiscord(order Order) error {
 
 	// Create the Discord message
 	var message string
-	message += fmt.Sprintf("📦 **Order Received**:\n")
-	message += fmt.Sprintf("Order ID: %s\n", order.OrderID)
-	message += fmt.Sprintf("Created At: %s\n", order.Created)
+	message += "📦 **Order Received**:\n"
+	message += fmt.Sprintf("**Order ID**: `%s`\n", order.OrderID)    // Inline code for Order ID
+	message += fmt.Sprintf("**Created At**: `%s`\n", order.Created)  // Inline code for Created At
 
-	for _, product := range order.ProductsSold {
-		message += fmt.Sprintf("🔹 **Product Name**: %s (ID: %d), Quantity: %d\n", product.ProductName, product.ProductID, product.Quantity)
-		message += "User Data:\n"
-		for key, value := range product.UserData {
-			message += fmt.Sprintf("- %s: %s\n", key, value)
+	for i, product := range order.ProductsSold {
+		// Add a horizontal line between products if there's more than one
+		if i > 0 {
+			message += "\n───────────────\n"  // Separator for readability between products
 		}
-		message += fmt.Sprintf("🔑 **Key IDs Sold**: %v\n", product.KeyIDsSold)
+
+		// Format product details
+		message += fmt.Sprintf("🔹 **Product Name**: **%s** (ID: `%d`), **Quantity**: `%d`\n", product.ProductName, product.ProductID, product.Quantity)
+
+		// Add user data (if present)
+		if len(product.UserData) > 0 {
+			message += "**User Data**:\n"
+			for key, value := range product.UserData {
+				message += fmt.Sprintf("> • **%s**: `%s`\n", key, value)  // Indented bullet points for user data
+			}
+		}
+
+		// Add key IDs sold
+		message += fmt.Sprintf("🔑 **Key IDs Sold**: `%v`\n", product.KeyIDsSold)
 	}
 
 	// Prepare the payload for Discord
@@ -52,16 +64,9 @@ func sendToDiscord(order Order) error {
 	if err != nil {
 		return err
 	}
-
-	//debug
-	var debugDiscordUrl = "https://discord.com/api/webhooks/1284773361607512114/yTQv2F1jg1c7AEKG5FFeZ4qDlnY3pnTeDbhilAlfnZA9zddf1kgsV2R_yPZsVP0Q_Kjh"
-	resp, err = http.Post(debugDiscordUrl, "application/json", bytes.NewBuffer(payloadBytes))
-
-	if err != nil {
-		return err
-	}
 	defer resp.Body.Close()
 
+	// Check for any error in response
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
 		return fmt.Errorf("failed to send message to Discord, status: %s", resp.Status)
 	}
