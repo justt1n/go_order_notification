@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Product represents each product sold in the order
@@ -51,8 +52,11 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	if order.OrderID == "" {
 		order.OrderID = "Unknown Order ID"
 	}
+	// Set the created time to the current time if it's missing and convert to GMT+7 if not null
 	if order.Created == "" {
 		order.Created = getCurrentTimeInGMT7()
+	} else {
+		order.Created = convertToGMT7(order.Created)
 	}
 	for i, product := range order.ProductsSold {
 		if product.ProductName == "" {
@@ -113,4 +117,18 @@ func handleEmptyRequest(w http.ResponseWriter) {
 	if err != nil {
 		return
 	}
+}
+
+func convertToGMT7(timeStr string) (string, error) {
+	// Parse the time string
+	t, err := time.Parse(time.RFC3339, timeStr)
+	if err != nil {
+		return "", err
+	}
+	location, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		return "", err
+	}
+	t = t.In(location)
+	return t.Format(time.RFC3339), nil
 }
